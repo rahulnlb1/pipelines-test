@@ -1,24 +1,40 @@
-pipelines:
-  - name: S_WF_001
+
+resources:
+  - name: S_WF_023_PropBag
+    type: PropertyBag
     configuration:
-      environmentVariables:
-        readOnly:
-          MY_MESSAGE: '"Hello World!"'
+      foo: "bar"
+
+pipelines:
+
+  - name: S_WF_023
     steps:
-      - name: S_WF_001_1
+  
+      - name: S_WF_023_001
         type: Bash
         execution:
           onExecute:
-            - echo $MY_MESSAGE
-            - echo "step_1"
-            - echo "Running $pipeline_name | $step_name on node ID $step_node_id"      
-      - name: S_WF_001_2
+            - echo "Step 1 is running"
+  
+      - name: S_WF_023_002
         type: Bash
         configuration:
           inputSteps:
-            - name: S_WF_001_1
+            - name: S_WF_023_001
+          outputResources:
+            - name: S_WF_023_PropBag  
+        execution:
+          onStart:
+            - write_output S_WF_023_PropBag "step_id=${step_id}"
+          onExecute:
+            - echo "Step 2 is running"
+            - exit 1;
+  
+      - name: S_WF_023_003
+        type: Bash
+        configuration:
+          inputResources:
+            - name: S_WF_023_PropBag  
         execution:
           onExecute:
-            - echo $MY_MESSAGE
-            - echo "step_2"
-            - echo "Running $pipeline_name | $step_name on node ID $step_node_id"
+            - echo "I should not be running"
