@@ -20,6 +20,6 @@ pipelines:
             - name: S_WF_002_1
         execution:
           onExecute:
-            - echo1 $MY_MESSAGE
+            - echo $MY_MESSAGE
             - echo "step_2"
             - echo "Running $pipeline_name | $step_name on node ID $step_node_id"
