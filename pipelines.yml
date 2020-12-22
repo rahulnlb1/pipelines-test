@@ -10,7 +10,7 @@ pipelines:
         type: Bash
         execution:
           onExecute:
-            - echo1 $MY_MESSAGE
+            - echo $MY_MESSAGE
             - echo "step_1"
             - echo "Running $pipeline_name | $step_name on node ID $step_node_id"      
       - name: S_WF_002_2
