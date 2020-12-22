@@ -1,50 +1,122 @@
 pipelines:
 
-  - name: S_WF_027
+  - name: S_WF_028
     configuration:
       nodePool: win_2019
     steps:
 
-      - name: S_WF_027_001
+      - name: S_WF_028_001
         type: PowerShell
-        execution:
-          onExecute:
-            - Write-Output "Step 1 is running"
-
-      - name: S_WF_027_002
-        type: PowerShell
-        configuration:
-          inputSteps:
-            - name: S_WF_027_001
-          affinityGroup: some_ag
         execution:
           onStart:
-            - add_run_variables step_2_var="foo"
+            - add_run_variables step_1_var="step_1"
           onExecute:
-            - Write-Output "Step 2 is running"
+            - Write-Output "step 1 is running"
 
-      - name: S_WF_027_003
+      - name: S_WF_028_002
         type: PowerShell
         configuration:
           inputSteps:
-            - name: S_WF_027_001
-          affinityGroup: some_ag
+            - name: S_WF_028_001
+          affinityGroup: ag_foo
+          priority: 4
         execution:
           onStart:
-            - add_run_variables step_3_var="bar"
+            - Write-Output "step_4_var - ${step_4_var}"
+            - if ("$step_4_var" -ne "step_4") { throw "variable does not match expected value" }
+            - add_run_variables step_2_var="step_2"
           onExecute:
-            - Write-Output "Step 3 is running"
+            - Write-Output "step 2 is running"
 
-      - name: S_WF_027_004
+      - name: S_WF_028_003
         type: PowerShell
         configuration:
           inputSteps:
-            - name: S_WF_027_002
-            - name: S_WF_027_003
-          affinityGroup: some_ag
+            - name: S_WF_028_001
+          affinityGroup: ag_foo
+          priority: 1
         execution:
+          onStart:
+            - Write-Output "step_1_var - ${step_1_var}"
+            - if ("$step_1_var" -ne "step_1") { throw "variable does not match expected value" }
+            - add_run_variables step_3_var="step_3"
           onExecute:
+            - Write-Output "step 3 is running"
+
+      - name: S_WF_028_004
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_WF_028_001
+          affinityGroup: ag_foo
+          priority: 3
+        execution:
+          onStart:
+            - Write-Output "step_3_var - ${step_3_var}"
+            - if ("$step_3_var" -ne "step_3") { throw "variable does not match expected value" }
+            - add_run_variables step_4_var="step_4"
+          onExecute:
+            - Write-Output "step 4 is running"
+
+      - name: S_WF_028_005
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_WF_028_002
+            - name: S_WF_028_003
+            - name: S_WF_028_004
+          affinityGroup: ag_foo
+          priority: 4
+        execution:
+          onStart:
+            - Write-Output "step_6_var - ${step_6_var}"
+            - if ("$step_6_var" -ne "step_6") { throw "variable does not match expected value" }
+            - add_run_variables step_5_var="step_5"
+          onExecute:
+            - Write-Output "step 5 is running"
+
+      - name: S_WF_028_006
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_WF_028_002
+            - name: S_WF_028_003
+            - name: S_WF_028_004
+          affinityGroup: ag_foo
+          priority: 2
+        execution:
+          onStart:
             - Write-Output "step_2_var - ${step_2_var}"
             - Write-Output "step_3_var - ${step_3_var}"
-            - if ("$step_2_var" -ne "foo") { throw "variable does not match expected value" }
-            - if ("$step_3_var" -ne "bar") { throw "variable does not match expected value" }
+            - Write-Output "step_4_var - ${step_4_var}"
+            - if ("$step_2_var" -ne "step_2") { throw "variable does not match expected value" }
+            - if ("$step_3_var" -ne "step_3") { throw "variable does not match expected value" }
+            - if ("$step_4_var" -ne "step_4") { throw "variable does not match expected value" }
+            - add_run_variables step_6_var="step_6"
+          onExecute:
+            - Write-Output "step 6 is running"
+
+      - name: S_WF_028_007
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_WF_028_005
+            - name: S_WF_028_006
+          affinityGroup: ag_foo
+          priority: 2
+        execution:
+          onStart:
+            - Write-Output "step_1_var - ${step_1_var}"
+            - Write-Output "step_2_var - ${step_2_var}"
+            - Write-Output "step_3_var - ${step_3_var}"
+            - Write-Output "step_4_var - ${step_4_var}"
+            - Write-Output "step_5_var - ${step_5_var}"
+            - Write-Output "step_6_var - ${step_6_var}"
+            - if ("$step_1_var" -ne "step_1") { throw "variable does not match expected value" }
+            - if ("$step_2_var" -ne "step_2") { throw "variable does not match expected value" }
+            - if ("$step_3_var" -ne "step_3") { throw "variable does not match expected value" }
+            - if ("$step_4_var" -ne "step_4") { throw "variable does not match expected value" }
+            - if ("$step_5_var" -ne "step_5") { throw "variable does not match expected value" }
+            - if ("$step_6_var" -ne "step_6") { throw "variable does not match expected value" }
+          onExecute:
+            - Write-Output "step 7 is running"
